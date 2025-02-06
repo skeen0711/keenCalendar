@@ -17,6 +17,7 @@ func saveTasks() {
 	encoder := json.NewEncoder(file)
 	err = encoder.Encode(tasks)
 	if err != nil {
+
 		fmt.Println("Error encoding tasks to file:", err)
 	}
 }
