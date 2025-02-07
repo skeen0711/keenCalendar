@@ -9,10 +9,11 @@ import (
 )
 
 type Task struct {
-	description    string
-	completed      bool
-	estimatedHours float64
-	dueDate        time.Time
+	Description    string    `json:"description"`
+	Completed      bool      `json:"completed"`
+	EstimatedHours float64   `json:"estimated_hours"`
+	ScheduledDays  int       `json:"scheduled_days"`
+	DueDate        time.Time `json:"due_date"`
 }
 
 var tasks []Task
@@ -39,10 +40,10 @@ func addTask() {
 	fmt.Scan(&estimatedHours)
 	tasks = append(tasks,
 		Task{
-			description:    descr,
-			completed:      false,
-			dueDate:        dueDate,
-			estimatedHours: estimatedHours,
+			Description:    descr,
+			Completed:      false,
+			DueDate:        dueDate,
+			EstimatedHours: estimatedHours,
 		})
 	fmt.Println("Task added.")
 }
@@ -55,16 +56,16 @@ func listTasks() {
 	fmt.Println("\n-----------------------\nTasks:")
 	for i, task := range tasks {
 		Complete := "No"
-		if task.completed {
+		if task.Completed {
 			Complete = "Yes"
 		}
 
 		fmt.Printf("%d. %s [Completed: %s || Due Date: %s || Est. Hours:  %.2f]\n",
 			i+1,
-			task.description,
+			task.Description,
 			Complete,
-			task.dueDate.Format(dateFormat),
-			task.estimatedHours,
+			task.DueDate.Format(dateFormat),
+			task.EstimatedHours,
 		)
 	}
 }
@@ -76,8 +77,8 @@ func completeTask() {
 	fmt.Scanln(&taskNo)
 
 	if taskNo > 0 && taskNo <= len(tasks) {
-		tasks[taskNo-1].completed = true
-		updateDueDates(tasks[taskNo-1].dueDate)
+		tasks[taskNo-1].Completed = true
+		updateDueDates(tasks[taskNo-1].DueDate)
 		fmt.Println("Task marked as completed.")
 	} else {
 		fmt.Println("Invalid task number.")
@@ -86,8 +87,8 @@ func completeTask() {
 
 func updateDueDates(completedTaskDate time.Time) {
 	for i, task := range tasks {
-		if !task.completed {
-			tasks[i].dueDate = task.dueDate.Add(24 * time.Hour)
+		if !task.Completed {
+			tasks[i].DueDate = task.DueDate.Add(24 * time.Hour)
 		}
 	}
 	fmt.Println("Due dates for tasks updated.")
@@ -117,7 +118,7 @@ func updateTask() {
 		n, _ := fmt.Scanf("%f\n", &estimatedHours)
 
 		if descr != "" {
-			tasks[taskNo-1].description = descr
+			tasks[taskNo-1].Description = descr
 		}
 
 		if dueDateStr != "" {
@@ -126,11 +127,11 @@ func updateTask() {
 				fmt.Println("Invalid Date Format, task not updated")
 				return
 			}
-			tasks[taskNo-1].dueDate = dueDate
+			tasks[taskNo-1].DueDate = dueDate
 		}
 
 		if n == 1 {
-			tasks[taskNo-1].estimatedHours = estimatedHours
+			tasks[taskNo-1].EstimatedHours = estimatedHours
 		}
 
 		fmt.Println("Task Details Updated.")
