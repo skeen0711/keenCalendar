@@ -16,6 +16,11 @@ type Task struct {
 	EstimatedCompletionDate time.Time  `json:"estimated_completion_date"`
 	workSlots               []WorkSlot `json:"work_slots"`
 	subTasks                []Task     `json:"sub_tasks"`
+	// subTasks might be best as a map. Need to think about the best
+	// data structure for this. It needs to hold
+	// a. list of all tasks in the "tree task"
+	// b. an order that they should be completed in, when applicable
+	// 		^^^ Is this really necessary??? Need to think this through
 }
 
 type WorkSlot struct {
