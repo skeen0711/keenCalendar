@@ -9,11 +9,21 @@ import (
 )
 
 type Task struct {
-	Description    string    `json:"description"`
-	Completed      bool      `json:"completed"`
-	EstimatedHours float64   `json:"estimated_hours"`
-	ScheduledDays  int       `json:"scheduled_days"`
-	DueDate        time.Time `json:"due_date"`
+	Description             string     `json:"description"`
+	Completed               bool       `json:"completed"`
+	EstimatedHours          float64    `json:"estimated_hours"`
+	DueDate                 time.Time  `json:"due_date"`
+	EstimatedCompletionDate time.Time  `json:"estimated_completion_date"`
+	workSlots               []WorkSlot `json:"work_slots"`
+	subTasks                []Task     `json:"sub_tasks"`
+}
+
+type WorkSlot struct {
+	Day             time.Weekday `json:"scheduled_day"`
+	TimeStart       time.Time    `json:"time_start"`
+	TimeEnd         time.Time    `json:"time_end"`
+	PlannedDuration float64      `json:"planned_duration"`
+	ActualDuration  float64      `json:"actual_duration"`
 }
 
 var tasks []Task
