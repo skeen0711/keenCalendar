@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	//"strconv" -- pointing fmt.Scan at a float64 var appears
-	//				to automatically convert it
 	"strings"
 	"time"
 )
@@ -19,11 +17,6 @@ type Task struct {
 	WorkSlots               []WorkSlot `json:"work_slots"`
 	SubTasks                []Task     `json:"sub_tasks"`
 	ParentTask              *Task      `json:"-"`
-	// subTasks might be best as a map. Need to think about the best
-	// data structure for this. It needs to hold
-	// a. list of all tasks in the "tree task"
-	// b. an order that they should be completed in, when applicable
-	// 		^^^ Is this really necessary??? Need to think this through
 }
 
 type WorkLog struct {
@@ -33,8 +26,8 @@ type WorkLog struct {
 
 type WorkSlot struct {
 	Day             time.Weekday `json:"scheduled_day"`
-	TimeStart       time.Time    `json:"time_start"`
-	TimeEnd         time.Time    `json:"time_end"`
+	TimeStart       int          `json:"time_start"`
+	TimeEnd         int          `json:"time_end"`
 	PlannedDuration float64      `json:"planned_duration"`
 	ActualDuration  float64      `json:"actual_duration"`
 	WorkLogs        []WorkLog    `json:"work_logs"`
@@ -50,26 +43,40 @@ func addTask() {
 	descr, _ := reader.ReadString('\n')
 
 	descr = strings.TrimSpace(descr)
-	//fmt.Print("Enter estimated hours to complete: ")
-	//hoursToCompleteStr, _ := reader.ReadString('\n')
-	//hoursToCompleteStr = strings.TrimSpace(hoursToCompleteStr)
-	//
-	//TotalHoursRemaining, err := strconv.Atoi(hoursToCompleteStr)
-	//if err != nil {
-	//	fmt.Println("Invalid number, enter in arabic form")
-	//	return
-	//}
+
 	fmt.Print("Enter Estimated hours to complete: ")
 	var TotalHoursRemaining float64
 	fmt.Scan(&TotalHoursRemaining)
+	estimatedCompletionDate := calculateTaskCompletionDate(&Task{})
+
 	tasks = append(tasks,
 		Task{
-			Description:         descr,
-			Completed:           false,
-			TotalHoursRemaining: TotalHoursRemaining,
-			TotalHoursCompleted: 0,
+			Description:             descr,
+			Completed:               false,
+			TotalHoursRemaining:     TotalHoursRemaining,
+			TotalHoursCompleted:     0,
+			EstimatedCompletionDate: estimatedCompletionDate,
+			WorkSlots:               []WorkSlot{},
+			SubTasks:                []Task{},
+			ParentTask:              nil,
 		})
 	fmt.Println("Task added.")
+}
+
+func addSubTask(parentTask *Task) {
+	fmt.Print("Enter subtask description: \n")
+	reader := bufio.NewReader(os.Stdin)
+	description, _ := reader.ReadString('\n')
+	description = strings.TrimSpace(description)
+	parentTask.SubTasks = append(parentTask.SubTasks,
+		Task{
+			Description:         description,
+			Completed:           false,
+			TotalHoursRemaining: 0,
+			TotalHoursCompleted: 0,
+			ParentTask:          parentTask,
+		})
+	fmt.Println("Subtask added.")
 }
 
 func listTasks() {
