@@ -19,11 +19,6 @@ type Task struct {
 	WorkSlots               []WorkSlot `json:"work_slots"`
 	SubTasks                []Task     `json:"sub_tasks"`
 	ParentTask              *Task      `json:"-"`
-	// subTasks might be best as a map. Need to think about the best
-	// data structure for this. It needs to hold
-	// a. list of all tasks in the "tree task"
-	// b. an order that they should be completed in, when applicable
-	// 		^^^ Is this really necessary??? Need to think this through
 }
 
 type WorkLog struct {
@@ -114,16 +109,6 @@ func completeTask() {
 	}
 }
 
-//func updateDueDates(completedTaskDate time.Time) {
-//  ???????? func needed???????????
-//	for i, task := range tasks {
-//		if !task.Completed {
-//			tasks[i].DueDate = task.DueDate.Add(24 * time.Hour)
-//		}
-//	}
-//	fmt.Println("Due dates for tasks updated.")
-//}
-
 func updateTask() {
 	listTasks()
 	fmt.Print("Enter task number to update: ")
@@ -151,16 +136,6 @@ func updateTask() {
 		if descr != "" {
 			tasks[taskNo-1].Description = descr
 		}
-		// Again, moving to due Dates being calculated rather than
-		// hard coded
-		//if dueDateStr != "" {
-		//	dueDate, err := time.Parse(dateFormat, dueDateStr)
-		//	if err != nil {
-		//		fmt.Println("Invalid Date Format, task not updated")
-		//		return
-		//	}
-		//	tasks[taskNo-1].DueDate = dueDate
-		//}
 
 		if n == 1 {
 			tasks[taskNo-1].TotalHoursRemaining = TotalHoursRemaining
