@@ -172,15 +172,16 @@ func deleteTask() {
 func generateWorkSlots(day time.Weekday, startTime string,
 	endTime string, plannedDuration int, durationType string) []WorkSlot {
 	var workSlots []WorkSlot
+	var endDate time.Time
 
 	// set today as start date and endDate as plannedDuration from today
 	now := time.Now()
 	if durationType == "days" {
-		endDate := now.AddDate(0, 0, plannedDuration)
+		endDate = now.AddDate(0, 0, plannedDuration)
 	} else if durationType == "months" {
-		endDate := now.AddDate(0, plannedDuration, 0)
+		endDate = now.AddDate(0, plannedDuration, 0)
 	} else {
-		endDate := now.AddDate(plannedDuration, 0, 0)
+		endDate = now.AddDate(plannedDuration, 0, 0)
 	}
 
 	// Convert received military times to go time
