@@ -4,19 +4,22 @@ import (
 	"fmt"
 )
 
+func displayOptions() {
+	fmt.Println("\n Todo CLI App")
+	fmt.Println("1. Add Task")
+	fmt.Println("2. List Tasks")
+	fmt.Println("3. Complete Task")
+	fmt.Println("4. Update Task")
+	fmt.Println("5. Delete Task")
+	fmt.Println("6. Save and Exit")
+	fmt.Println("Select an Option")
+}
 func main() {
 	// Load tasks from file upon startup
 	loadTasks()
 
 	for {
-		fmt.Println("\n Todo CLI App")
-		fmt.Println("1. Add Task")
-		fmt.Println("2. List Tasks")
-		fmt.Println("3. Complete Task")
-		fmt.Println("4. Update Task")
-		fmt.Println("5. Delete Task")
-		fmt.Println("6. Save and Exit")
-		fmt.Println("Select an Option")
+		displayOptions()
 
 		var choice int
 		fmt.Scan(&choice)
