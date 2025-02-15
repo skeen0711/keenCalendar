@@ -1,6 +1,7 @@
 package main
 
 import (
+	"awesomeProject/tasks"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -17,7 +18,7 @@ func saveTasks() {
 	defer file.Close()
 
 	encoder := json.NewEncoder(file)
-	err = encoder.Encode(tasks)
+	err = encoder.Encode(tasks.tasks)
 	if err != nil {
 		fmt.Println("Error encoding tasks to file:", err)
 	} else {
@@ -38,10 +39,10 @@ func loadTasks() {
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&tasks)
+	err = decoder.Decode(&tasks.tasks)
 	if err != nil {
 		fmt.Println("Error loading tasks:", err)
 	} else {
-		fmt.Printf("%d tasks loaded successfully from %s\n", len(tasks), taskFile)
+		fmt.Printf("%d tasks loaded successfully from %s\n", len(tasks.tasks), taskFile)
 	}
 }

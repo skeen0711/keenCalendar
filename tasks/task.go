@@ -1,4 +1,4 @@
-package main
+package tasks
 
 import (
 	"bufio"
@@ -37,9 +37,9 @@ type WorkSlot struct { // how do I identify the next open slot when calculating 
 
 var tasks []Task
 
-const dateFormat = "2006-01-02" // YYYY-MM-DD
+//const dateFormat = "2006-01-02" // YYYY-MM-DD
 
-func addTask() {
+func AddTask() {
 	fmt.Print("Enter task description: \n")
 	reader := bufio.NewReader(os.Stdin)
 	descr, _ := reader.ReadString('\n')
@@ -49,7 +49,7 @@ func addTask() {
 	fmt.Print("Enter Estimated hours to complete: ")
 	var TotalHoursRemaining float64
 	fmt.Scan(&TotalHoursRemaining)
-	estimatedCompletionDate := calculateTaskCompletionDate(&Task{})
+	estimatedCompletionDate := CalculateTaskCompletionDate(&Task{})
 
 	tasks = append(tasks,
 		Task{
@@ -65,7 +65,7 @@ func addTask() {
 	fmt.Println("Task added.")
 }
 
-func addSubTask(parentTask *Task) {
+func AddSubTask(parentTask *Task) {
 	fmt.Print("Enter subtask description: \n")
 	reader := bufio.NewReader(os.Stdin)
 	description, _ := reader.ReadString('\n')
@@ -81,7 +81,7 @@ func addSubTask(parentTask *Task) {
 	fmt.Println("Subtask added.")
 }
 
-func listTasks() {
+func ListTasks() {
 	if len(tasks) == 0 {
 		fmt.Println("You have no tasks!")
 		return
@@ -99,13 +99,13 @@ func listTasks() {
 			Complete,
 			task.TotalHoursRemaining,
 			task.TotalHoursCompleted,
-			calculateTaskCompletionDate(&task),
+			CalculateTaskCompletionDate(&task),
 		)
 	}
 }
 
-func completeTask() {
-	listTasks()
+func CompleteTask() {
+	ListTasks()
 	fmt.Println("Enter the task number to mark as completed: ")
 	var taskNo int
 	_, err := fmt.Scanln(&taskNo)
@@ -123,8 +123,8 @@ func completeTask() {
 	}
 }
 
-func updateTask() {
-	listTasks()
+func UpdateTask() {
+	ListTasks()
 	fmt.Print("Enter task number to update: ")
 	var taskNo int
 	fmt.Scan(&taskNo)
@@ -155,8 +155,8 @@ func updateTask() {
 	}
 }
 
-func deleteTask() {
-	listTasks()
+func DeleteTask() {
+	ListTasks()
 	fmt.Println("Enter the task number to delete: ")
 	var taskNo int
 	fmt.Scanln(&taskNo)
@@ -169,7 +169,7 @@ func deleteTask() {
 	}
 }
 
-func generateWorkSlots(day time.Weekday, startTime string,
+func GenerateWorkSlots(day time.Weekday, startTime string,
 	endTime string, plannedDuration int, durationType string) []WorkSlot {
 	var workSlots []WorkSlot
 	var endDate time.Time
@@ -217,7 +217,7 @@ func generateWorkSlots(day time.Weekday, startTime string,
 	return workSlots
 }
 
-func calculateTaskCompletionDate(task *Task) time.Time {
+func CalculateTaskCompletionDate(task *Task) time.Time {
 	remainingHours := task.TotalHoursRemaining
 	now := time.Now()
 	var lastSlotEnd time.Time
@@ -228,21 +228,16 @@ func calculateTaskCompletionDate(task *Task) time.Time {
 	// If there are sub tasks associated with the parent, begin recursively call
 	// calculateTaskcompletionDate on next subtask first using the remaining hours,
 	// then consuming any applicable remaining workslots
+
 	for _, slot := range task.WorkSlots {
-		if slot.WorkLogs != nil {
-			continue
+		if slot.EndDateTime.After(now) {
+			remainingHours -= slot.PlannedDuration
+			lastSlotEnd = slot.EndDateTime
+			if remainingHours <= 0 {
+				break
+			}
 		}
-		remainingHours -= slot.PlannedDuration
 	}
-	//for _, slot := range task.WorkSlots {
-	//	if slot.TimeEnd.After(now) {
-	//		remainingHours -= slot.PlannedDuration
-	//		lastSlotEnd = slot.TimeEnd
-	//		if remainingHours <= 0 {
-	//			break
-	//		}
-	//	}
-	//}
 
 	if remainingHours > 0 {
 		lastSlotEnd = lastSlotEnd.Add(time.Duration(
@@ -251,10 +246,10 @@ func calculateTaskCompletionDate(task *Task) time.Time {
 	return lastSlotEnd
 }
 
-func calculateParentCompletionDate(task *Task) time.Time {
+func CalculateParentCompletionDate(task *Task) time.Time {
 	var lastSlotEnd time.Time
 	for _, subTask := range task.SubTasks {
-		subTaskCompletionDate := calculateParentCompletionDate(&subTask)
+		subTaskCompletionDate := CalculateParentCompletionDate(&subTask)
 		if subTaskCompletionDate.After(lastSlotEnd) {
 			lastSlotEnd = subTaskCompletionDate
 		}
@@ -262,7 +257,7 @@ func calculateParentCompletionDate(task *Task) time.Time {
 	return lastSlotEnd
 }
 
-func updateParentProgress(task *Task) {
+func UpdateParentProgress(task *Task) {
 	if task.ParentTask != nil {
 		parent := task.ParentTask
 		parent.TotalHoursRemaining = 0

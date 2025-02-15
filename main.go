@@ -1,6 +1,7 @@
 package main
 
 import (
+	"awesomeProject/tasks"
 	"fmt"
 )
 
@@ -26,15 +27,15 @@ func main() {
 
 		switch choice {
 		case 1:
-			addTask()
+			tasks.AddTask()
 		case 2:
-			listTasks()
+			tasks.ListTasks()
 		case 3:
-			completeTask()
+			tasks.CompleteTask()
 		case 4:
-			updateTask()
+			tasks.UpdateTask()
 		case 5:
-			deleteTask()
+			tasks.DeleteTask()
 		case 6:
 			saveTasks()
 			fmt.Println("Tasks saved! Exiting program...")
