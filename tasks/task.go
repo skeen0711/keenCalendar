@@ -225,11 +225,11 @@ func UpdateParentProgress(task *Task) {
 
 // Function to translate a planned work slot time period with a
 // start and end date into a series of events in discrete time
-func GenerateWorkSlots(day time.Weekday,
-	startTime string, // string in military time
-	endTime string,   // string in military time
+func GenerateWorkSlots(day time.Weekday, // 0= Sunday, 1=Monday, etc...
+	startTime string,                    // string in military time
+	endTime string,                      // string in military time
 	plannedDuration int,
-	durationType string) []WorkSlot {
+	durationType string) []WorkSlot { // days, years, or months
 	var workSlots []WorkSlot
 	var endDate time.Time
 
